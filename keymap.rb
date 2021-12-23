@@ -7,7 +7,7 @@ kbd.init_direct_pins(
 
 # default layer should be added at first
 kbd.add_layer :default, %i[
-  KC_SPC KC_MUTE PREV NEXT KC_MUTE KC_ENT
+  KC_SPC KC_MUTE PREV NEXT KC_MUTE RGB_TOGGLE
 ]
 
 #
@@ -18,9 +18,6 @@ kbd.add_layer :default, %i[
 kbd.define_mode_key :PREV,          [ %i(KC_LGUI KC_LEFT),  :KC_NO,                       300,              nil ]
 kbd.define_mode_key :NEXT,          [ %i(KC_LGUI KC_RIGHT), :KC_NO,                       300,              nil ]
 
-
-#define ENCODERS_PAD_A { B6, B3 }
-#define ENCODERS_PAD_B { B2, B1 }
 encoder_left = RotaryEncoder.new(21, 23)
 encoder_left.configure :left
 encoder_left.clockwise do
@@ -34,10 +31,10 @@ kbd.append encoder_left
 encoder_right = RotaryEncoder.new(20, 22)
 encoder_right.configure :right
 encoder_right.clockwise do
-  kbd.send_key :KC_PGDOWN
+  kbd.send_key :RGB_MODE_FORWARD
 end
 encoder_right.counterclockwise do
-  kbd.send_key :KC_PGUP
+  kbd.send_key :RGB_MODE_REVERSE
 end
 kbd.append encoder_right
 
@@ -55,6 +52,8 @@ rgb.saturation = 50  # 0-100 / default: 100
 rgb.max_value  = 10  # 1-31  / default: 13
 
 kbd.append rgb
+
+kbd.define_mode_key :RGB_TOGGLE, [ Proc.new { rgb.toggle }, :KC_NO, 300, nil ]
 
 kbd.before_report do
   kbd.invert_sft if kbd.keys_include?(:KC_SCOLON)
